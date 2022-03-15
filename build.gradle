@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation("io.cucumber:cucumber-java:6.10.2")
+}
+
+configurations {
+    providedRuntime
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+task cucumber(type: JavaExec) {
+    dependsOn assemble, testClasses
+    main = "io.cucumber.core.cli.Main"
+    classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+    jvmArgs "-Dfile.encoding=UTF-8"
+    args = ['--plugin', 'pretty',
+            '--glue', 'com.odde.atddv2',
+            'src/test/resources']
+}
