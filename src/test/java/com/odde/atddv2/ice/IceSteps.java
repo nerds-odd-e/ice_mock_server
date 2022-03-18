@@ -1,9 +1,12 @@
 package com.odde.atddv2.ice;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class IceSteps {
+
+    private String response;
 
     @Given("ice mock server")
     public void ice_mock_server() {
@@ -26,7 +29,12 @@ public class IceSteps {
             if (printer == null) {
                 throw new Error("Invalid proxy");
             }
-            printer.printString("Hello World!");
+            response = printer.printString("Hello world");
         }
+    }
+
+    @Then("ice client get server response")
+    public void iceClientGetServerResponse() {
+        System.out.println("response = " + response);
     }
 }

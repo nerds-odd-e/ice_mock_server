@@ -4,7 +4,7 @@ import com.zeroc.Ice.Current;
 
 public class PrinterI implements Demo.Printer {
     @Override
-    public void printString(String s, Current current) {
-        System.out.println(s);
+    public String printString(String s, Current current) {
+        return s + " " + current.requestId;
     }
 }
