@@ -16,6 +16,8 @@ repositories {
 dependencies {
     implementation 'com.zeroc:ice:3.7.2'
     testImplementation("io.cucumber:cucumber-java:6.10.2")
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.4.0'
+    testImplementation("org.assertj:assertj-core:3.19.0")
 }
 
 configurations {
