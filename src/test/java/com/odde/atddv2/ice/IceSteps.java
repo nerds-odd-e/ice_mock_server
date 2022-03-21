@@ -1,6 +1,5 @@
 package com.odde.atddv2.ice;
 
-import Demo.Clock;
 import Demo.ClockPrx;
 import Demo.TimeOfDay;
 import com.github.leeonky.jfactory.JFactory;
@@ -9,6 +8,8 @@ import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.Current;
 import com.zeroc.Ice.ObjectAdapter;
 import com.zeroc.Ice.Util;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -32,12 +33,32 @@ public class IceSteps {
     JFactory jFactory;
     private String response;
     private TimeOfDay timeOfDayResponse;
-    private Thread server;
+    private Communicator communicator = Util.initialize();
+    private PrinterI printerI;
+    private ClockI clockI;
+
+    @Before
+    public void startIceMockServer() {
+        printerI = spy(new PrinterI());
+        clockI = spy(new ClockI());
+        new Thread(() -> {
+            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("MockServer", "default -p 10000");
+            adapter.add(printerI, Util.stringToIdentity("PrinterI"));
+            adapter.add(clockI, Util.stringToIdentity("ClockI"));
+            adapter.activate();
+            communicator.waitForShutdown();
+        }).start();
+    }
+
+    @After
+    public void stopIceMockServer() {
+        communicator.shutdown();
+    }
 
     @When("ice client send request")
     public void iceClientSendRequest() {
         try (com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize()) {
-            com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("SimplePrinter:default -p 10001");
+            com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("PrinterI:default -p 10000");
             Demo.PrinterPrx printer = Demo.PrinterPrx.checkedCast(base);
             if (printer == null) {
                 throw new Error("Invalid proxy");
@@ -48,16 +69,7 @@ public class IceSteps {
 
     @Given("ice mock server with response {string}")
     public void iceMockServerWithResponse(String response) {
-        new Thread(() -> {
-            try (Communicator communicator = Util.initialize()) {
-                ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("SimplePrinterAdapter", "default -p 10001");
-                PrinterI printerI = spy(new PrinterI());
-                when(printerI.printString(anyString(), any(Current.class))).thenReturn(response);
-                adapter.add(printerI, Util.stringToIdentity("SimplePrinter"));
-                adapter.activate();
-                communicator.waitForShutdown();
-            }
-        }).start();
+        when(printerI.printString(anyString(), any(Current.class))).thenReturn(response);
     }
 
     @Then("ice client get server response {string}")
@@ -68,7 +80,7 @@ public class IceSteps {
     @When("ice client send get time request")
     public void iceClientSendGetTimeRequest() {
         try (com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize()) {
-            com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("Clock:default -p 10000");
+            com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("ClockI:default -p 10000");
             ClockPrx clock = ClockPrx.checkedCast(base);
             if (clock == null) {
                 throw new Error("Invalid proxy");
@@ -84,15 +96,6 @@ public class IceSteps {
 
     @Given("ice mock server with for object {string}")
     public void iceMockServerWithForObject(String objectName) {
-        new Thread(() -> {
-            try (Communicator communicator = Util.initialize()) {
-                ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints(objectName + "Adapter", "default -p 10000");
-                Clock clock = spy(new ClockI());
-                when(clock.getTime(any(Current.class))).thenReturn(jFactory.spec(TimeOfDays.TimeOfDay.class).query());
-                adapter.add(clock, Util.stringToIdentity(objectName));
-                adapter.activate();
-                communicator.waitForShutdown();
-            }
-        }).start();
+        when(clockI.getTime(any(Current.class))).thenReturn(jFactory.spec(TimeOfDays.TimeOfDay.class).query());
     }
 }
