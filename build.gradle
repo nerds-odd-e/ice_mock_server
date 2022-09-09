@@ -14,12 +14,12 @@ buildscript {
 }
 
 plugins {
-    id 'com.zeroc.gradle.ice-builder.slice' version '1.4.7' apply false
+//    id 'com.zeroc.gradle.ice-builder.slice' version '1.4.7' apply false
 }
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'java'
-apply plugin: 'com.zeroc.gradle.ice-builder.slice'
+//apply plugin: 'com.zeroc.gradle.ice-builder.slice'
 apply plugin: 'org.springframework.boot'
 
 group 'org.example'
@@ -36,7 +36,8 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'com.zeroc:ice:3.7.2'
+//    implementation 'com.zeroc:ice:3.7.2'
+    testImplementation files('libs/Ice.jar')
     testImplementation("io.cucumber:cucumber-java:6.10.2")
     testImplementation("io.cucumber:cucumber-spring:6.10.2")
     testImplementation('org.springframework.boot:spring-boot-starter-test')
@@ -65,8 +66,8 @@ task cucumber(type: JavaExec) {
             'src/test/resources']
 }
 
-slice {
-    java {
-        files = [file("./Printer.ice")]
-    }
-}
+//slice {
+//    java {
+//        files = [file("./Printer.ice")]
+//    }
+//}

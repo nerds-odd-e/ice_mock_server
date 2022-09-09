@@ -1,13 +1,11 @@
 package com.odde.atddv2.ice;
 
 import Demo.ClockPrx;
+import Demo.ClockPrxHelper;
 import Demo.TimeOfDay;
+import Ice.*;
 import com.github.leeonky.jfactory.JFactory;
 import com.odde.atddv2.ice.spec.TimeOfDays;
-import com.zeroc.Ice.Communicator;
-import com.zeroc.Ice.Current;
-import com.zeroc.Ice.ObjectAdapter;
-import com.zeroc.Ice.Util;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -28,6 +26,26 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = {CucumberConfiguration.class}, loader = SpringBootContextLoader.class)
 @CucumberContextConfiguration
 public class IceSteps {
+
+    public static class PrinterI extends Demo._PrinterDisp {
+        @Override
+        public String printString(String s, Current current) {
+            return s + " - returned by code";
+        }
+    }
+
+    public static class ClockI extends Demo._ClockDisp {
+
+        @Override
+        public TimeOfDay getTime(Current current) {
+            return null;
+        }
+
+        @Override
+        public void setTime(TimeOfDay time, Current current) {
+
+        }
+    }
 
     @Autowired
     JFactory jFactory;
@@ -57,14 +75,14 @@ public class IceSteps {
 
     @When("ice client send request")
     public void iceClientSendRequest() {
-        try (com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize()) {
-            com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("PrinterI:default -p 10000");
-            Demo.PrinterPrx printer = Demo.PrinterPrx.checkedCast(base);
-            if (printer == null) {
-                throw new Error("Invalid proxy");
-            }
-            response = printer.printString("Hello world");
+        Communicator communicator = Util.initialize();
+        ObjectPrx base = communicator.stringToProxy("PrinterI:default -p 10000");
+        Demo.PrinterPrx printer = Demo.PrinterPrxHelper.checkedCast(base);
+        if (printer == null) {
+            throw new Error("Invalid proxy");
         }
+        response = printer.printString("Hello world");
+        communicator.shutdown();
     }
 
     @Given("ice mock server with response {string}")
@@ -79,14 +97,14 @@ public class IceSteps {
 
     @When("ice client send get time request")
     public void iceClientSendGetTimeRequest() {
-        try (com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize()) {
-            com.zeroc.Ice.ObjectPrx base = communicator.stringToProxy("ClockI:default -p 10000");
-            ClockPrx clock = ClockPrx.checkedCast(base);
-            if (clock == null) {
-                throw new Error("Invalid proxy");
-            }
-            timeOfDayResponse = clock.getTime();
+        Communicator communicator = Util.initialize();
+        ObjectPrx base = communicator.stringToProxy("ClockI:default -p 10000");
+        ClockPrx clock = ClockPrxHelper.checkedCast(base);
+        if (clock == null) {
+            throw new Error("Invalid proxy");
         }
+        timeOfDayResponse = clock.getTime();
+        communicator.shutdown();
     }
 
     @Then("ice client get server response structure")
