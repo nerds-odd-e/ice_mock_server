@@ -82,7 +82,7 @@ public class IceSteps {
             throw new Error("Invalid proxy");
         }
         response = printer.printString("Hello world");
-        communicator.shutdown();
+        communicator.destroy();
     }
 
     @Given("ice mock server with response {string}")
@@ -104,7 +104,7 @@ public class IceSteps {
             throw new Error("Invalid proxy");
         }
         timeOfDayResponse = clock.getTime();
-        communicator.shutdown();
+        communicator.destroy();
     }
 
     @Then("ice client get server response structure")
