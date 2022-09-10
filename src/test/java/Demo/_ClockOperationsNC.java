@@ -16,4 +16,6 @@ public interface _ClockOperationsNC
     TimeOfDay getTime();
 
     void setTime(TimeOfDay time);
+
+    PrinterPrx getPrinter();
 }

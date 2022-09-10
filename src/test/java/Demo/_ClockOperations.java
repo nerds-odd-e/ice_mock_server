@@ -16,4 +16,6 @@ public interface _ClockOperations
     TimeOfDay getTime(Ice.Current __current);
 
     void setTime(TimeOfDay time, Ice.Current __current);
+
+    PrinterPrx getPrinter(Ice.Current __current);
 }

@@ -13,6 +13,46 @@ package Demo;
 
 public final class _ClockDelD extends Ice._ObjectDelD implements _ClockDel
 {
+    public PrinterPrx
+    getPrinter(java.util.Map __ctx)
+	throws IceInternal.LocalExceptionWrapper
+    {
+	Ice.Current __current = new Ice.Current();
+	__initCurrent(__current, "getPrinter", Ice.OperationMode.Nonmutating, __ctx);
+	while(true)
+	{
+	    IceInternal.Direct __direct = new IceInternal.Direct(__current);
+	    try
+	    {
+		Clock __servant = null;
+		try
+		{
+		    __servant = (Clock)__direct.servant();
+		}
+		catch(ClassCastException __ex)
+		{
+		    Ice.OperationNotExistException __opEx = new Ice.OperationNotExistException();
+		    __opEx.id = __current.id;
+		    __opEx.facet = __current.facet;
+		    __opEx.operation = __current.operation;
+		    throw __opEx;
+		}
+		try
+		{
+		    return __servant.getPrinter(__current);
+		}
+		catch(Ice.LocalException __ex)
+		{
+		    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+		}
+	    }
+	    finally
+	    {
+		__direct.destroy();
+	    }
+	}
+    }
+
     public TimeOfDay
     getTime(java.util.Map __ctx)
 	throws IceInternal.LocalExceptionWrapper

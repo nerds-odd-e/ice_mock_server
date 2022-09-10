@@ -13,6 +13,36 @@ package Demo;
 
 public final class ClockPrxHelper extends Ice.ObjectPrxHelperBase implements ClockPrx
 {
+    public PrinterPrx
+    getPrinter()
+    {
+	return getPrinter(__defaultContext());
+    }
+
+    public PrinterPrx
+    getPrinter(java.util.Map __ctx)
+    {
+	int __cnt = 0;
+	while(true)
+	{
+	    try
+	    {
+		__checkTwowayOnly("getPrinter");
+		Ice._ObjectDel __delBase = __getDelegate();
+		_ClockDel __del = (_ClockDel)__delBase;
+		return __del.getPrinter(__ctx);
+	    }
+	    catch(IceInternal.LocalExceptionWrapper __ex)
+	    {
+		__cnt = __handleExceptionWrapperRelaxed(__ex, __cnt);
+	    }
+	    catch(Ice.LocalException __ex)
+	    {
+		__cnt = __handleException(__ex, __cnt);
+	    }
+	}
+    }
+
     public TimeOfDay
     getTime()
     {

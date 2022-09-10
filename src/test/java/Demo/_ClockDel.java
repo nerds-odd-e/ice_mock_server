@@ -18,4 +18,7 @@ public interface _ClockDel extends Ice._ObjectDel
 
     void setTime(TimeOfDay time, java.util.Map __ctx)
 	throws IceInternal.LocalExceptionWrapper;
+
+    PrinterPrx getPrinter(java.util.Map __ctx)
+	throws IceInternal.LocalExceptionWrapper;
 }

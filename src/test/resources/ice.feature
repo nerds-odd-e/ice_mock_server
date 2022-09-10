@@ -19,3 +19,8 @@ Feature: Ice
       second: 15
     }
     """
+
+  Scenario: mock returned PrinterPrx of Clock.getPrinter
+    When ice client send clock printer request "hello"
+    Then ice server receive printstring "hello"
+

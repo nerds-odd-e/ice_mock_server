@@ -1,8 +1,6 @@
 package com.odde.atddv2.ice;
 
-import Demo.ClockPrx;
-import Demo.ClockPrxHelper;
-import Demo.TimeOfDay;
+import Demo.*;
 import Ice.*;
 import com.github.leeonky.jfactory.JFactory;
 import com.odde.atddv2.ice.spec.TimeOfDays;
@@ -20,12 +18,27 @@ import org.springframework.test.context.ContextConfiguration;
 import static com.github.leeonky.dal.extension.assertj.DALAssert.expect;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {CucumberConfiguration.class}, loader = SpringBootContextLoader.class)
 @CucumberContextConfiguration
 public class IceSteps {
+    @When("ice client send clock printer request {string}")
+    public void iceClientSendClockPrinterRequest(String arg0) {
+        Communicator communicator = Util.initialize();
+        ObjectPrx base = communicator.stringToProxy("ClockI:default -p 10000");
+        ClockPrx clock = ClockPrxHelper.checkedCast(base);
+        if (clock == null) {
+            throw new Error("Invalid proxy");
+        }
+        clock.getPrinter().printString(arg0);
+        communicator.destroy();
+    }
+
+    @Then("ice server receive printstring {string}")
+    public void iceServerReceivePrintstring(String arg0) {
+        verify(printerI).printString(eq(arg0), any());
+    }
 
     public static class PrinterI extends Demo._PrinterDisp {
         @Override
@@ -43,7 +56,13 @@ public class IceSteps {
 
         @Override
         public void setTime(TimeOfDay time, Current current) {
+        }
 
+        @Override
+        public PrinterPrx getPrinter(Current __current) {
+            Identity identity = new Identity();
+            identity.name = "PrinterI";
+            return PrinterPrxHelper.uncheckedCast(__current.adapter.createProxy(identity));
         }
     }
 

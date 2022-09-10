@@ -68,6 +68,12 @@ public abstract class _ClockDisp extends Ice.ObjectImpl implements Clock
 	return __ids[0];
     }
 
+    public final PrinterPrx
+    getPrinter()
+    {
+	return getPrinter(null);
+    }
+
     public final TimeOfDay
     getTime()
     {
@@ -102,8 +108,19 @@ public abstract class _ClockDisp extends Ice.ObjectImpl implements Clock
 	return IceInternal.DispatchStatus.DispatchOK;
     }
 
+    public static IceInternal.DispatchStatus
+    ___getPrinter(Clock __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+	__checkMode(Ice.OperationMode.Nonmutating, __current.mode);
+	IceInternal.BasicStream __os = __inS.os();
+	PrinterPrx __ret = __obj.getPrinter(__current);
+	PrinterPrxHelper.__write(__os, __ret);
+	return IceInternal.DispatchStatus.DispatchOK;
+    }
+
     private final static String[] __all =
     {
+	"getPrinter",
 	"getTime",
 	"ice_id",
 	"ice_ids",
@@ -125,25 +142,29 @@ public abstract class _ClockDisp extends Ice.ObjectImpl implements Clock
 	{
 	    case 0:
 	    {
-		return ___getTime(this, in, __current);
+		return ___getPrinter(this, in, __current);
 	    }
 	    case 1:
 	    {
-		return ___ice_id(this, in, __current);
+		return ___getTime(this, in, __current);
 	    }
 	    case 2:
 	    {
-		return ___ice_ids(this, in, __current);
+		return ___ice_id(this, in, __current);
 	    }
 	    case 3:
 	    {
-		return ___ice_isA(this, in, __current);
+		return ___ice_ids(this, in, __current);
 	    }
 	    case 4:
 	    {
-		return ___ice_ping(this, in, __current);
+		return ___ice_isA(this, in, __current);
 	    }
 	    case 5:
+	    {
+		return ___ice_ping(this, in, __current);
+	    }
+	    case 6:
 	    {
 		return ___setTime(this, in, __current);
 	    }

@@ -13,6 +13,43 @@ package Demo;
 
 public final class _ClockDelM extends Ice._ObjectDelM implements _ClockDel
 {
+    public PrinterPrx
+    getPrinter(java.util.Map __ctx)
+	throws IceInternal.LocalExceptionWrapper
+    {
+	IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getPrinter", Ice.OperationMode.Nonmutating, __ctx, __compress);
+	try
+	{
+	    boolean __ok = __og.invoke();
+	    try
+	    {
+		IceInternal.BasicStream __is = __og.is();
+		if(!__ok)
+		{
+		    try
+		    {
+			__is.throwException();
+		    }
+		    catch(Ice.UserException __ex)
+		    {
+			throw new Ice.UnknownUserException(__ex.ice_name());
+		    }
+		}
+		PrinterPrx __ret;
+		__ret = PrinterPrxHelper.__read(__is);
+		return __ret;
+	    }
+	    catch(Ice.LocalException __ex)
+	    {
+		throw new IceInternal.LocalExceptionWrapper(__ex, false);
+	    }
+	}
+	finally
+	{
+	    __connection.reclaimOutgoing(__og);
+	}
+    }
+
     public TimeOfDay
     getTime(java.util.Map __ctx)
 	throws IceInternal.LocalExceptionWrapper

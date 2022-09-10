@@ -18,4 +18,7 @@ public interface ClockPrx extends Ice.ObjectPrx
 
     public void setTime(TimeOfDay time);
     public void setTime(TimeOfDay time, java.util.Map __ctx);
+
+    public PrinterPrx getPrinter();
+    public PrinterPrx getPrinter(java.util.Map __ctx);
 }

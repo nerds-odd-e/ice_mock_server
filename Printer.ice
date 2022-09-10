@@ -7,14 +7,15 @@ module Demo
 
     struct TimeOfDay
     {
-        short hour;         // 0 - 23
-        short minute;       // 0 - 59
-        short second;       // 0 - 59
+        short hour;
+        short minute;
+        short second;
     };
 
     interface Clock
     {
         TimeOfDay getTime();
         void setTime(TimeOfDay time);
+        nonmutating Printer* getPrinter();
     };
 };
