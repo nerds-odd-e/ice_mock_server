@@ -23,6 +23,9 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = {CucumberConfiguration.class}, loader = SpringBootContextLoader.class)
 @CucumberContextConfiguration
 public class IceSteps {
+
+    private ObjectAdapter adapter;
+
     @When("ice client send clock printer request {string}")
     public void iceClientSendClockPrinterRequest(String arg0) {
         Communicator communicator = Util.initialize();
@@ -60,9 +63,7 @@ public class IceSteps {
 
         @Override
         public PrinterPrx getPrinter(Current __current) {
-            Identity identity = new Identity();
-            identity.name = "PrinterI";
-            return PrinterPrxHelper.uncheckedCast(__current.adapter.createProxy(identity));
+            return null;
         }
     }
 
@@ -78,13 +79,16 @@ public class IceSteps {
     public void startIceMockServer() {
         printerI = spy(new PrinterI());
         clockI = spy(new ClockI());
+        adapter = communicator.createObjectAdapterWithEndpoints("MockServer", "default -p 10000");
         new Thread(() -> {
-            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("MockServer", "default -p 10000");
             adapter.add(printerI, Util.stringToIdentity("PrinterI"));
             adapter.add(clockI, Util.stringToIdentity("ClockI"));
             adapter.activate();
             communicator.waitForShutdown();
         }).start();
+
+        PrinterPrx printerI1 = PrinterPrxHelper.uncheckedCast(adapter.createProxy(Util.stringToIdentity("PrinterI")));
+        doReturn(printerI1).when(clockI).getPrinter(any());
     }
 
     @After
