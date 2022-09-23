@@ -24,3 +24,16 @@ Feature: Ice
     When ice client send clock printer request "hello"
     Then ice server receive printstring "hello"
 
+#  docker run --rm -it -e USER_NAME=user -e USER_PASSWORD=password -e PASSWORD_ACCESS=true -p 2222:2222 linuxserver/openssh-server
+  Scenario: ssh file operation, only demo ssh file, not a test case
+    * ssh server:
+      | host      | port | user | password |
+      | 127.0.0.1 | 2222 | user | password |
+    When write file "/tmp/test.txt":
+    """
+    hello world
+    """
+    Then got file "/tmp/test.txt":
+    """
+    hello world
+    """

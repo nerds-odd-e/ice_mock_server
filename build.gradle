@@ -46,6 +46,7 @@ dependencies {
     testImplementation "com.github.leeonky:jfactory"
     testImplementation "com.github.leeonky:jfactory-cucumber"
     testImplementation "com.github.leeonky:assertj-DAL"
+    testImplementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
 }
 
 configurations {

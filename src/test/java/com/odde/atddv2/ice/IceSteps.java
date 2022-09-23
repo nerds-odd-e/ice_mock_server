@@ -3,6 +3,9 @@ package com.odde.atddv2.ice;
 import Demo.*;
 import Ice.*;
 import com.github.leeonky.jfactory.JFactory;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import com.odde.atddv2.ice.spec.TimeOfDays;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -10,12 +13,17 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
-import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
 import static com.github.leeonky.dal.extension.assertj.DALAssert.expect;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -115,7 +123,7 @@ public class IceSteps {
 
     @Then("ice client get server response {string}")
     public void iceClientGetServerResponse(String expected) {
-        Assertions.assertThat(response).isEqualTo(expected);
+        assertThat(response).isEqualTo(expected);
     }
 
     @When("ice client send get time request")
@@ -138,5 +146,53 @@ public class IceSteps {
     @Given("ice mock server with for object {string}")
     public void iceMockServerWithForObject(String objectName) {
         when(clockI.getTime(any(Current.class))).thenReturn(jFactory.spec(TimeOfDays.TimeOfDay.class).query());
+    }
+
+    private SshServer sshServer = new SshServer();
+
+    @Given("ssh server:")
+    public void ssh_server(io.cucumber.datatable.DataTable dataTable) {
+        Map<String, String> map = dataTable.asMaps().get(0);
+        sshServer.user = map.get("user");
+        sshServer.password = map.get("password");
+        sshServer.host = map.get("host");
+        sshServer.port = map.get("port");
+    }
+
+    @When("write file {string}:")
+    public void write_file(String file, String content) throws Exception {
+        JSch jsch = new JSch();
+        Session jschSession = jsch.getSession(sshServer.user, sshServer.host, Integer.parseInt(sshServer.port));
+        jschSession.setConfig("StrictHostKeyChecking", "no");
+        jschSession.setPassword(sshServer.password);
+        jschSession.connect();
+        ChannelSftp channel = (ChannelSftp) jschSession.openChannel("sftp");
+        channel.connect();
+
+        String localFile = "/tmp/tmp.write";
+        Files.writeString(Path.of(localFile), content);
+        channel.put(localFile, file);
+
+        channel.exit();
+    }
+
+    @Then("got file {string}:")
+    public void got_file(String file, String content) throws Exception {
+        JSch jsch = new JSch();
+        Session jschSession = jsch.getSession(sshServer.user, sshServer.host, Integer.parseInt(sshServer.port));
+        jschSession.setConfig("StrictHostKeyChecking", "no");
+        jschSession.setPassword(sshServer.password);
+        jschSession.connect();
+        ChannelSftp channel = (ChannelSftp) jschSession.openChannel("sftp");
+        channel.connect();
+
+        InputStream inputStream = channel.get(file);
+        assertThat(new String(inputStream.readAllBytes())).isEqualTo(content);
+
+        channel.exit();
+    }
+
+    private static class SshServer {
+        public String host, port, user, password;
     }
 }
