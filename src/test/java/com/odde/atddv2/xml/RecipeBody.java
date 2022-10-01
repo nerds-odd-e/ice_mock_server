@@ -13,6 +13,7 @@ import java.util.List;
 public class RecipeBody {
 
     @JacksonXmlElementWrapper(localName = "ParamList")
+    @JacksonXmlProperty(localName = "Param")
     private List<Param> paramList;
 
     @JacksonXmlProperty(localName = "Step")

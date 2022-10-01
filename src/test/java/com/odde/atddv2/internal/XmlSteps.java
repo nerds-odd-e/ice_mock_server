@@ -32,4 +32,16 @@ public class XmlSteps {
         String actual = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xmlMapper.writeValueAsString(recipeBody);
         assertThat(actual, CompareMatcher.isIdenticalTo(xml).ignoreWhitespace().ignoreComments().ignoreElementContentWhitespace());
     }
+
+    @SneakyThrows
+    @Given("the following recipe body read and write should pass:")
+    public void the_following_recipe_body_read_and_write_should_pass(String xml) {
+        XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        RecipeBody recipeBody = xmlMapper.readValue(xml, RecipeBody.class);
+
+        String actual = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xmlMapper.writeValueAsString(recipeBody);
+        assertThat(actual, CompareMatcher.isIdenticalTo(xml).ignoreWhitespace().ignoreComments().ignoreElementContentWhitespace());
+    }
 }
