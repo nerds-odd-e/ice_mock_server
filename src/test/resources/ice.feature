@@ -1,3 +1,4 @@
+@ice
 Feature: Ice
 
   Scenario: mock ice response

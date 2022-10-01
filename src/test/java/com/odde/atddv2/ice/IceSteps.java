@@ -83,7 +83,7 @@ public class IceSteps {
     private PrinterI printerI;
     private ClockI clockI;
 
-    @Before
+    @Before("@ice")
     public void startIceMockServer() {
         printerI = spy(new PrinterI());
         clockI = spy(new ClockI());
@@ -99,7 +99,7 @@ public class IceSteps {
         doReturn(printerI1).when(clockI).getPrinter(any());
     }
 
-    @After
+    @After("@ice")
     public void stopIceMockServer() {
         communicator.shutdown();
     }
