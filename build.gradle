@@ -1,11 +1,14 @@
 buildscript {
     repositories {
         maven {
-            url "http://maven.aliyun.com/nexus/content/groups/public"
+            url "./offline-repository"
         }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+//        maven {
+//            url "http://maven.aliyun.com/nexus/content/groups/public"
+//        }
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.4.4")
@@ -30,8 +33,16 @@ group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
+    maven {
+        url "./offline-repository"
+    }
+//    maven {
+//        url offlineRepositoryRoot
+//    }
+//    mavenCentral()
 }
+
+//print offlineRepositoryRoot
 
 //dependencyManagement {
 //    imports {
@@ -54,6 +65,8 @@ offlineDependencies {
 dependencies {
 //    implementation 'com.zeroc:ice:3.7.2'
     implementation files('libs/Ice.jar')
+
+    implementation group: 'org.junit', name: 'junit-bom', version: '5.7.0', ext: 'pom'
     implementation("io.cucumber:cucumber-java:6.10.2")
     implementation("io.cucumber:cucumber-spring:6.10.2")
     implementation('org.springframework.boot:spring-boot-starter-test:2.4.4')
