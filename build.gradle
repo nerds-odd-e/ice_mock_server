@@ -3,28 +3,28 @@ buildscript {
         maven {
             url "./offline-repository"
         }
-//        maven {
-//            url "http://maven.aliyun.com/nexus/content/groups/public"
-//        }
-//        maven {
-//            url "https://plugins.gradle.org/m2/"
-//        }
+        maven {
+            url "http://maven.aliyun.com/nexus/content/groups/public"
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.4.4")
-//        classpath "io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE"
         classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
         classpath 'gradle.plugin.io.pry.gradle.offline_dependencies:gradle-offline-dependencies-plugin:0.5.0'
     }
 }
 
 plugins {
-//    id 'com.zeroc.gradle.ice-builder.slice' version '1.4.7' apply false
+    id 'com.zeroc.gradle.ice-builder.slice' version '1.4.7' apply false
 }
 
-//apply plugin: 'io.spring.dependency-management'
+apply plugin: 'io.spring.dependency-management'
 apply plugin: 'java'
-//apply plugin: 'com.zeroc.gradle.ice-builder.slice'
+apply plugin: 'com.zeroc.gradle.ice-builder.slice'
 apply plugin: 'org.springframework.boot'
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: 'io.pry.gradle.offline_dependencies'
@@ -63,7 +63,7 @@ offlineDependencies {
 }
 
 dependencies {
-//    implementation 'com.zeroc:ice:3.7.2'
+    implementation 'com.zeroc:ice:3.7.2'
     implementation files('libs/Ice.jar')
 
     implementation group: 'org.junit', name: 'junit-bom', version: '5.7.0', ext: 'pom'
